@@ -1,12 +1,10 @@
 Summary: X.Org X11 libXxf86misc runtime library
 Name: libXxf86misc
-Version: 1.0.2
-Release: 1%{?dist}
+Version: 1.0.3
+Release: 4%{?dist}
 License: MIT
 Group: System Environment/Libraries
 URL: http://www.x.org
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
 Source0: ftp://ftp.x.org/pub/individual/lib/%{name}-%{version}.tar.bz2
 
 BuildRequires: pkgconfig(xproto) pkgconfig(xext)
@@ -27,26 +25,18 @@ X.Org X11 libXxf86misc development package
 
 %build
 %configure --disable-static
-make
+make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
-
-make install DESTDIR=$RPM_BUILD_ROOT
-
-# We intentionally don't ship *.la files
-rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
+find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root,-)
-# FIXME: Missing some of the doc files %doc AUTHORS COPYING README INSTALL ChangeLog
-%doc COPYING ChangeLog
+%doc README COPYING ChangeLog
 %{_libdir}/libXxf86misc.so.1
 %{_libdir}/libXxf86misc.so.1.1.0
 
@@ -54,10 +44,27 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/libXxf86misc.so
 %{_libdir}/pkgconfig/xxf86misc.pc
-#%dir %{_mandir}/man3x
 %{_mandir}/man3/*.3*
 
 %changelog
+* Thu Jul 19 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.3-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
+* Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.3-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
+* Mon Feb 07 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
+* Mon Nov 22 2010 Peter Hutterer <peter.hutterer@redhat.com> 1.0.3-1
+- libXxf86misc 1.0.3
+
+* Wed Sep 29 2010 jkeating - 1.0.2-3
+- Rebuilt for gcc bug 634757
+
+* Tue Sep 14 2010 Parag Nemade <paragn AT fedoraproject.org> 1.0.2-2
+- Merge-review cleanup (#226095)
+
 * Tue Oct 13 2009 Adam Jackson <ajax@redhat.com> 1.0.2-1
 - libXxf86misc 1.0.2
 
